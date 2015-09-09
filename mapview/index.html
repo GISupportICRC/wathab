@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WPA - Map View</title>
+		<link rel="icon" href="images/logos/favicon.ico" />
+        <meta property="og:title" content="Wathab Project Dashboard Mapview">
+ 		
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="css/dc.css"/>
+		<link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css"/>
+		<link rel="stylesheet" type="text/css" href="css/dataTables.tableTools.css"/>
+		<link rel="stylesheet" type="text/css" href="css/dataTables.responsive.css"/>
+		<link rel="stylesheet" type="text/css" href="leaflet-0.7.3/leaflet.css"/>
+		<link rel="stylesheet" type="text/css" href="leaflet-control-geocoder/Control.Geocoder.css" />
+		<link rel="stylesheet" href="css/MarkerCluster.css" />
+		<link rel="stylesheet" href="css/MarkerCluster.Default.css" />
+        <link rel="stylesheet" type="text/css" href="css/site.css"/>
+        <link  rel="stylesheet" href="css/font-awesome.min.css">
+           
+    </head>
+    <body>
+				
+		<div class="row navbar-fixed-top" id="header_row">
+			<div class="container">
+
+				<h1><img src="images/logos/ICRC_logo.svg" alt="ICRC" height="40em" width="35em"> WatHab Project Dashboard | <small>Beta</small></h1>
+				
+				<span style="float:right;margin: 5px 0;">
+					
+					
+					<button type="button" class="btn btn-default" id="btnCountry">Project view</button>
+					
+					<div class="btn-group">
+					  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="btnYear">
+						Year
+					  </button>
+					  <ul class="dropdown-menu" role="menu" id="drpdwnYear">
+					  </ul>
+					</div>
+					
+					  
+					
+				</span>
+			</div>
+		</div>
+        <div class="container" id="mainContainer" style="margin-top:62px;">
+			<div class="row" id="loading">
+				<div class="col-md-12 col-md-offset12"  style="text-align:center">
+					<h4>Loading... initial upload can take a few minutes</h4>
+					<p>nb: this webpage does not work on IE8 or older</p>
+					<div id="spinner"></div>
+					<img src="images/spinner_100x100.gif"/>
+					<hr>
+				</div>
+			</div>
+			<div class="row" id="navRow">
+                <div class="col-md-12" style="text-align:right;">
+					<a id="togglePermalink">Share view</a>                   
+                </div>
+            </div>
+			<div class="row"><small><div class="col-md-12" id="permalink" style="text-align:right;display:none;word-wrap:break-word;"></div></small></div>			
+			<div class="row" style="background-color: #ececeb;padding-bottom:10px;">
+				<div class="col-md-3">
+					<h3>Water & Habitat Projects</h3>
+					<h4>as reported in WPA HQ database</h4>
+					<h5 style="color:#ca1b18">Disclaimer: this is a Beta version, some info might be wrong or missing</h5>
+					<div class="row">
+						<div class="col-md-12">
+							<button type="button" class="btn btn-default icrcCustomBtn" id="reset">Reset filters</button>
+						</div>
+					</div>
+				</div>                        
+				<div class="col-md-3">
+					<div class="row">
+						<div class="col-md-12" id="div_projectType_chart" style="text-align:center;"><h5>Project direct cost by type</h5></div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="row">
+						<div class="col-md-12" id="div_projectDomain_chart" style="text-align:center;"><h5>Project direct cost by domain</h5></div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="row" style="text-align:right;">
+						<div class="col-md-12">
+							<h5>Project sites (RP)</h5>
+							<div class="col-md-4" style="float:right;right:30px;">
+								<div class="indicator" id="RecipientNumber">
+									<span class="filter-count"></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row" style="background-color:#ececeb;padding-bottom:10px;">
+				<div class="col-md-9">
+					<div id="map"></div>
+				</div>
+				<div class="col-md-3">
+					<div class="row">
+						<div class="col-md-12">
+							<div id="div_country_chart"><h5>Top 10 countries in map extent</h5><p><small>Sorted by direct cost.</small></p></div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<button type="button" class="btn btn-default icrcCustomBtn" id="btnGotoCountry" disabled><a>Go to filtered country view</a></button>
+						</div>
+					</div>
+				</div>    
+			</div>
+			<div class="row" style="padding-top:10px;">
+				<div class="col-md-12">
+					<table id="div_table" class="display responsive nowrap" cellspacing="0" width="100%" style="font-size:12px;">
+						<thead style="font-size:15px;">
+							<tr>
+								<th>Recipient Place</th>
+								<th>Project Number</th>
+								<th>Project Name</th>
+								<th>Country</th>
+								<th>Admin1</th>
+							</tr>
+						</thead>
+					</table>
+					<p id="filterInfo"></p>
+				</div> 
+			</div>
+        </div>
+		
+		
+		
+		<!-- Modal -->
+		<div class="modal fade"
+			id="myModal"
+			tabindex="-1"
+			role="dialog"
+			aria-labelledby="projectTitle"
+			aria-hidden="true">
+			<div class="modal-dialog" id="mod_window">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close closebutton" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title" id="projectTitle"></h4>
+					</div>
+					<div class="modal-body">
+						<div class="container-fluid">
+							
+							<div class="row-fluid">
+								<table class="popupTable">
+									<tr>
+										<th>Project number</th>
+										<td id="projectNumber"></td>
+									</tr>
+									<tr>
+										<th>Recipient Place</th>
+										<td id="recipientPlace"></td>
+									</tr>
+									<tr>
+										<th>Target Number of Beneficiaries</th>
+										<td id="targetBeneficiaries"></td>
+									</tr>
+									<tr>
+										<th>Start date</th>
+										<td id="startDate"></td>
+									</tr>
+									<tr>
+										<th>End date</th>
+										<td id="endDate"></td>
+									</tr>
+								</table>
+							</div>
+							<div class="row">
+								<div class="span12 col-md-12" style="text-align:right;">
+									<button type="button" class="btn btn-default icrcCustomBtn" id="btnSeePDF">See detailed PDF</button>
+									<button type="button" class="btn btn-default icrcCustomBtn" id="btnGotoProject"><a>Go to project view</a></button>
+								</div>								
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div  style="position: fixed; bottom:0; background-color: lightgray; float:left; padding-left: 15px; padding-right: 15px;">
+			© ICRC GISupport Lab 2015 EHG1500100 | <a href="mailto:gisupport@icrc.org" target="_top">gisupport@icrc.org</a>
+		</div>		
+		
+		
+		
+		
+        <script src="js/jquery.js"></script>
+		<script src="js/d3.v3.js"></script>
+        <script src="js/crossfilter.v1.min.js"></script>
+        <script src="js/dc.js"></script>
+		<script src="js/jquery.dataTables.min.js"></script>
+		<script src="js/dataTables.tableTools.js"></script>
+		<script src="js/dataTables.responsive.js"></script>
+		<script src="leaflet-0.7.3/leaflet.js"></script>
+		<script src="leaflet-control-geocoder/Control.Geocoder.js"></script>
+		<script src="js/leaflet.markercluster.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		
+		<script src="js/countries.js"></script>
+
+		<script src="js/siteFunctions.js"></script> 
+        <script src="js/site.js"></script> 
+    </body>
+</html>

@@ -174,7 +174,7 @@ $.getJSON( wathabService + "/query?where=1%3D1&text=&objectIds=&time=&geometry=&
 		var newHref = root + yearHash;
 		return newHref;
 	}
-	for (var i = wpa_years.features.length - 1; i > 0; i--) {
+	for (var i = wpa_years.features.length - 1; i >= 0; i--) {
 		if (wpa_years.features[i].attributes.Budget_Year != null && wpa_years.features[i].attributes.Budget_Year != wpaYear) {
 			var year = wpa_years.features[i].attributes.Budget_Year;
 			$('#drpdwnYear').append('<li><a href="' + getYearHref(year) + '">' + year + '</a></li>');

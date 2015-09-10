@@ -191,12 +191,12 @@ $.getJSON( wathabService + "/query?where=1%3D1&text=&objectIds=&time=&geometry=&
 	// AJAX Request to get the projects of the selected year (wpaYear)
 	// date query in arcgis online: 
 	var online = {
-		dateQuery: "where=Actual_End_Date+<+%27" + nextWpaYear + "-01-01+00%3A00%3A00%27+AND+Actual_End_Date+>+%27" + wpaYear + "-01-01+00%3A00%3A00%27",
+		dateQuery: "/query?where=Actual_End_Date+<+%27" + nextWpaYear + "-01-01+00%3A00%3A00%27+AND+Actual_End_Date+>+%27" + wpaYear + "-01-01+00%3A00%3A00%27",
 		parameters: "&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Meter&outFields=*&returnGeometry=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&f=pjson&token="
 	}
 	// date query in arcgis server (not used in this example):
 	var server = {
-		dateQuery: "where=Actual_End_Date+%3C+date+%27" + nextWpaYear + "-01-01+00%3A00%3A00%27+AND+Actual_End_Date+%3E+date+%27" + wpaYear + "-01-01+00%3A00%3A00%27",
+		dateQuery: "/query?where=Actual_End_Date+%3C+date+%27" + nextWpaYear + "-01-01+00%3A00%3A00%27+AND+Actual_End_Date+%3E+date+%27" + wpaYear + "-01-01+00%3A00%3A00%27",
 		parameters: "&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&f=pjson"
 	}
 	$.getJSON( wathabService + online.dateQuery + online.parameters, function( wpa ) {

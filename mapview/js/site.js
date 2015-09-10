@@ -54,8 +54,11 @@ var map = L.map('map',{
 	maxZoom:16,
 	minZoom:1,
 	layers: [basemap_ICRC_LightGrey],
-    attributionControl: false
+    attributionControl: true
 });
+
+map.attributionControl.addAttribution("© <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap contributors</a>, <a href='http://www.icrc.org'>ICRC</a>. Boundaries, names and designations used on this map do not imply official endorsement or acceptance by the ICRC.");
+
 var activeBasemap = 'ICRC LightGrey';
 var defaultBasemap = 'ICRC LightGrey';
 var initialBounds = map.getBounds();
